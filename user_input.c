@@ -7,8 +7,30 @@
 #include <string.h>
 
 
-static void getstr(char **str);
+static void getstr(char **str)
+{
+	int c, i = 0, len = 2;
 
+	assert(str);
+
+	fflush(stdin);
+
+	*str = malloc(len * sizeof(char));
+	assert(*str);
+
+	while (((c = getc(stdin)) != '\n') && (c != EOF)) {
+		if (i > len - 2) {
+			len *= 2;
+			*str = realloc(*str, len * sizeof(char));
+			assert(*str);
+		}
+
+		(*str)[i] = c;
+		i++;
+	}
+
+	(*str)[i] = '\0';
+}
 
 int get_menu_selection(struct htable *table)
 {
@@ -84,46 +106,3 @@ void get_matrix_dim(int *dim, const char *prompt)
 
 	free(str);
 }
-
-
-static void getstr(char **str)
-{
-	int c, i = 0, len = 2;
-
-	assert(str);
-
-	fflush(stdin);
-
-	*str = malloc(len * sizeof(char));
-	assert(*str);
-
-	while (((c = getc(stdin)) != '\n') && (c != EOF)) {
-		if (i > len - 2) {
-			len *= 2;
-			*str = realloc(*str, len * sizeof(char));
-			assert(*str);
-		}
-
-		(*str)[i] = c;
-		i++;
-	}
-
-	(*str)[i] = '\0';
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

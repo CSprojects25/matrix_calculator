@@ -14,9 +14,6 @@ struct htable {
 };
 
 
-/*
- * Function Declarations
- */
 void htable_init(struct htable *table, const int num);
 void htable_free(struct htable *table);
 

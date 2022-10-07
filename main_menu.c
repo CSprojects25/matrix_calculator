@@ -19,10 +19,18 @@ static const struct key_val options[NUM_OPTIONS] = { {"e", EXIT},
 						     {"m", MATRIX_MENU},
 };
 
+static inline void greeting()
+{
+	printf("Welcome to my Matrix Program!\n");
+}
 
-static inline void greeting();
-static inline void show_menu();
 
+static inline void show_menu()
+{
+	printf("Select an option from the Main Menu\n"
+	       "(e) to Exit\n"
+	       "(m) to go to the Matrix Menu\n");
+}
 
 void main_menu()
 {
@@ -52,22 +60,3 @@ void main_menu()
 out:
 	htable_free(&table);
 }
-
-
-static inline void greeting()
-{
-	printf("Welcome to my Matrix Program!\n");
-}
-
-
-static inline void show_menu()
-{
-	printf("Select an option from the Main Menu\n"
-	       "(e) to Exit\n"
-	       "(m) to go to the Matrix Menu\n");
-}
-
-
-
-
-

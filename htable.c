@@ -20,13 +20,69 @@ struct forward_list {
 };
 
 
-static uint64_t djb2_hash(const char *str);
-static void node_init(struct node **node, const struct key_val *data);
-static void forward_list_push_front(struct forward_list *list, const struct key_val *data);
-static void forward_list_pop_front(struct forward_list *list);
-static int forward_list_find(const struct forward_list *list, const char *key);
-static void forward_list_free(struct forward_list *list);
+static uint64_t djb2_hash(const char *str)
+{
+	uint64_t hash = 5381;
+	int c;
 
+	while (c = *str++)
+	    hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+	return hash;
+}
+
+
+static void node_init(struct node **node, const struct key_val *data)
+{
+	*node = malloc(sizeof(struct node));
+	assert(*node);
+
+	(*node)->data = data;
+	(*node)->next = NULL;
+}
+
+
+static void forward_list_push_front(struct forward_list *list, const struct key_val *data)
+{
+	struct node *node;
+	node_init(&node, data);
+	node->next = list->head;
+	list->head = node;
+}
+
+
+static void forward_list_pop_front(struct forward_list *list)
+{
+	if (!list->head)
+		return;
+
+	struct node *tmp = list->head->next;
+	free(list->head);
+	list->head = tmp;
+}
+
+
+static int forward_list_find(const struct forward_list *list, const char *key)
+{
+	if (!list->head)
+		return NOT_FOUND;
+
+	struct node *tmp = list->head;
+	while (tmp) {
+		if (!strcmp(tmp->data->key, key))
+			return tmp->data->val;
+		tmp = tmp->next;
+	}
+
+	return NOT_FOUND;
+}
+
+
+static void forward_list_free(struct forward_list *list)
+{
+	while (list->head)
+		forward_list_pop_front(list);
+}
 
 void htable_init(struct htable *table, const int num)
 {
@@ -96,69 +152,6 @@ int htable_at(struct htable *table, const char *key)
 }
 
 
-static uint64_t djb2_hash(const char *str)
-{
-	uint64_t hash = 5381;
-	int c;
-
-	while (c = *str++)
-	    hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-
-	return hash;
-}
-
-
-static void node_init(struct node **node, const struct key_val *data)
-{
-	*node = malloc(sizeof(struct node));
-	assert(*node);
-
-	(*node)->data = data;
-	(*node)->next = NULL;
-}
-
-
-static void forward_list_push_front(struct forward_list *list, const struct key_val *data)
-{
-	struct node *node;
-	node_init(&node, data);
-	node->next = list->head;
-	list->head = node;
-}
-
-
-static void forward_list_pop_front(struct forward_list *list)
-{
-	if (!list->head)
-		return;
-
-	struct node *tmp = list->head->next;
-	free(list->head);
-	list->head = tmp;
-}
-
-
-static int forward_list_find(const struct forward_list *list, const char *key)
-{
-	if (!list->head)
-		return NOT_FOUND;
-
-	struct node *tmp = list->head;
-	while (tmp) {
-		if (!strcmp(tmp->data->key, key))
-			return tmp->data->val;
-		tmp = tmp->next;
-	}
-
-	return NOT_FOUND;
-}
-
-
-static void forward_list_free(struct forward_list *list)
-{
-	while (list->head) 
-		forward_list_pop_front(list);
-}
 
 
 

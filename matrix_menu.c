@@ -30,71 +30,6 @@ static const struct key_val options[NUM_OPTIONS] = { {"e", EXIT},
 };
 
 
-static void matrix_init(struct matrix *mat, const int num);
-static void matrix_free(struct matrix *mat);
-static void matrix_show(const struct matrix *mat);
-static void matrix_user_input_1(struct matrix *a);
-static void matrix_user_input_2(struct matrix *a, struct matrix *b);
-static void matrix_user_input_multiply(struct matrix *a, struct matrix *b);
-static void matrix_sub_arr(struct matrix *a, const struct matrix *b);
-static void matrix_add_arr(struct matrix *a, const struct matrix *b);
-static void matrix_add();
-static void matrix_sub();
-static void matrix_transpose_arr(struct matrix *mat);
-static void matrix_transpose();
-static void matrix_multiply_arr(const struct matrix *a,
-		                const struct matrix *b,
-		                struct matrix *c);
-static void matrix_multiply();
-static int matrix_eliminate_arr(struct matrix *mat);
-static void matrix_eliminate();
-static inline void swap_floats(float *a, float *b);
-static inline void show_menu();
-
-
-
-void matrix_menu()
-{
-	struct htable table;
-	int choice;
-
-	htable_init(&table, HTABLE_SIZE);
-	htable_add_arr(&table, options, NUM_OPTIONS);
-
-	while (1) {
-		show_menu();
-		choice = get_menu_selection(&table);
-
-		switch (choice) {
-		case EXIT :
-			exit(0);
-		case BACK_TO_MAIN_MENU :
-			goto out;
-		case ADD :
-			matrix_add();
-			break;
-		case SUB :
-			matrix_sub();
-			break;
-		case MUL :
-			matrix_multiply();
-			break;
-		case TRANSPOSE :
-			matrix_transpose();
-			break;
-		case ELIMINATE :
-			matrix_eliminate();
-			break;
-		case INVALID :
-			printf("Invalid selection. Try again...\n");
-			continue;
-		}
-	}
-out:
-	htable_free(&table);
-}
-
-
 static void matrix_init(struct matrix *mat, const int num)
 {
 	assert(num > 0);
@@ -122,6 +57,15 @@ static void matrix_show(const struct matrix *mat)
 		}
 		printf("\n");
 	}
+}
+
+static inline void swap_floats(float *a, float *b)
+{
+	float tmp;
+
+	tmp = *a;
+	*a = *b;
+	*b = tmp;
 }
 
 
@@ -339,17 +283,6 @@ static void matrix_eliminate()
 	matrix_free(&mat);
 }
 
-
-static inline void swap_floats(float *a, float *b)
-{
-	float tmp;
-
-	tmp = *a;
-	*a = *b;
-	*b = tmp;
-}
-
-
 static inline void show_menu()
 {
 	printf("Select an option from the Matrix Menu\n"
@@ -362,3 +295,44 @@ static inline void show_menu()
 		"(elim) to change a Matrix to REF\n");
 }
 
+
+void matrix_menu()
+{
+	struct htable table;
+	int choice;
+
+	htable_init(&table, HTABLE_SIZE);
+	htable_add_arr(&table, options, NUM_OPTIONS);
+
+	while (1) {
+		show_menu();
+		choice = get_menu_selection(&table);
+
+		switch (choice) {
+		case EXIT :
+			exit(0);
+		case BACK_TO_MAIN_MENU :
+			goto out;
+		case ADD :
+			matrix_add();
+			break;
+		case SUB :
+			matrix_sub();
+			break;
+		case MUL :
+			matrix_multiply();
+			break;
+		case TRANSPOSE :
+			matrix_transpose();
+			break;
+		case ELIMINATE :
+			matrix_eliminate();
+			break;
+		case INVALID :
+			printf("Invalid selection. Try again...\n");
+			continue;
+		}
+	}
+out:
+	htable_free(&table);
+}
